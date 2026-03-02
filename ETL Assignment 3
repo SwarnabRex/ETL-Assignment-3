@@ -1,0 +1,155 @@
+# ETL Assignment
+
+---
+
+# SECTION A – THEORETICAL QUESTIONS
+
+## Q1. What are the most common reasons for missing data in ETL pipelines?
+
+- Data entry errors or skipped fields.
+- System or application failures during data collection.
+- Data corruption during extraction or transfer.
+- Schema mismatch between source and target systems.
+- Integration of multiple data sources with different structures.
+- Incorrect transformation or filtering logic.
+
+---
+
+## Q2. Why is blindly deleting rows with missing values considered a bad practice in ETL?
+
+- It reduces the dataset size unnecessarily.
+- Important information may be lost.
+- It can introduce bias in analysis.
+- It may distort statistical results.
+- Missing data itself may provide useful insights.
+
+---
+
+## Q3. Explain the difference between:
+### Listwise Deletion  
+### Column Deletion  
+
+Also mention one scenario where each is appropriate.
+
+Listwise Deletion:
+- Removes entire rows that contain missing values.
+- Appropriate when only a small number of rows have missing data.
+
+Column Deletion:
+- Removes entire columns with a high percentage of missing values.
+- Appropriate when a column has too many missing values and is not important for analysis.
+
+---
+
+## Q4. Why is median imputation preferred over mean imputation for skewed data such as income?
+
+- The mean is affected by extreme values (outliers).
+- Income data is usually right-skewed.
+- The median is not influenced by extreme values.
+- Therefore, median gives a more accurate central value for skewed data.
+
+---
+
+## Q5. What is forward fill and in what type of dataset is it most useful?
+
+Forward fill replaces missing values with the last available non-missing value.
+
+It is most useful in:
+- Time-series datasets.
+- Sequential data such as sales, stock prices, or sensor readings.
+
+---
+
+## Q6. Why should flagging missing values be done before imputation in an ETL workflow?
+
+- It preserves information about which values were originally missing.
+- Missingness may contain useful patterns.
+- It helps machine learning models understand data behavior.
+- After imputation, original missing information would be lost.
+
+---
+
+## Q7. Consider a scenario where income is missing for many customers. How can this missingness itself provide business insights?
+
+- Customers may avoid sharing income due to privacy concerns.
+- Certain customer groups may skip income fields more often.
+- It may indicate incomplete profiles or low engagement.
+- It can reveal issues in the data collection process.
+- It can help improve customer segmentation strategies.
+
+---
+
+# SECTION B – PRACTICAL QUESTIONS
+
+Given Dataset:
+
+| Customer_ID | Name         | City       | Monthly_Sales | Income | Region |
+|-------------|-------------|------------|---------------|--------|--------|
+| 101 | Rahul Mehta  | Mumbai     | 12000 | 65000 | West  |
+| 102 | Anjali Rao   | Bengaluru  | NaN   | NaN   | South |
+| 103 | Suresh Iyer  | Chennai    | 15000 | 72000 | South |
+| 104 | Neha Singh   | Delhi      | NaN   | NaN   | North |
+| 105 | Amit Verma   | Pune       | 18000 | 58000 | NaN   |
+| 106 | Karan Shah   | Ahmedabad  | NaN   | 61000 | West  |
+| 107 | Pooja Das    | Kolkata    | 14000 | NaN   | East  |
+| 108 | Riya Kapoor  | Jaipur     | 16000 | 69000 | North |
+
+---
+
+## Q8. Listwise Deletion  
+Remove all rows where Region is missing.
+
+Affected Row:
+- Customer_ID 105 (Region is NaN)
+
+Dataset After Deletion:
+
+| Customer_ID | Name         | City       | Monthly_Sales | Income | Region |
+|-------------|-------------|------------|---------------|--------|--------|
+| 101 | Rahul Mehta  | Mumbai     | 12000 | 65000 | West  |
+| 102 | Anjali Rao   | Bengaluru  | NaN   | NaN   | South |
+| 103 | Suresh Iyer  | Chennai    | 15000 | 72000 | South |
+| 104 | Neha Singh   | Delhi      | NaN   | NaN   | North |
+| 106 | Karan Shah   | Ahmedabad  | NaN   | 61000 | West  |
+| 107 | Pooja Das    | Kolkata    | 14000 | NaN   | East  |
+| 108 | Riya Kapoor  | Jaipur     | 16000 | 69000 | North |
+
+Records Lost:
+1 record removed.
+
+---
+
+## Q9. Imputation  
+Handle missing values in Monthly_Sales using Forward Fill.
+
+Monthly_Sales Before:
+[12000, NaN, 15000, NaN, 18000, NaN, 14000, 16000]
+
+Monthly_Sales After Forward Fill:
+[12000, 12000, 15000, 15000, 18000, 18000, 14000, 16000]
+
+Explanation:
+Forward fill replaces missing values with the previous available value. It is suitable when data is sequential and earlier values are reasonable estimates.
+
+---
+
+## Q10. Flagging Missing Data  
+Create a flag column for missing Income.
+
+Income_Missing_Flag (0 = present, 1 = missing)
+
+| Customer_ID | Income | Income_Missing_Flag |
+|-------------|--------|---------------------|
+| 101 | 65000 | 0 |
+| 102 | NaN   | 1 |
+| 103 | 72000 | 0 |
+| 104 | NaN   | 1 |
+| 105 | 58000 | 0 |
+| 106 | 61000 | 0 |
+| 107 | NaN   | 1 |
+| 108 | 69000 | 0 |
+
+Number of customers with missing income:
+3 customers.
+
+---
